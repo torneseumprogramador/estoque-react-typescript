@@ -1,18 +1,22 @@
-import React, {useState, FormEvent} from 'react';
-import {ThemeProvider, Checkbox, createMuiTheme, CssBaseline, FormControl, InputLabel, Input, Container, Button, Box, Grid, makeStyles, Typography} from '@material-ui/core'
+import React from 'react';
+import { ThemeProvider, createMuiTheme, CssBaseline } from '@material-ui/core';
 import Router from './router';
-function App() {
+import { AuthProvider } from './contexts/AuthContext';
+
+const App: React.FC = () => {
   const theme = createMuiTheme({
     palette: {
-      type: 'light'
-    }
-  })
+      type: 'light',
+    },
+  });
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router />
+    <AuthProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router />
       </ThemeProvider>
+    </AuthProvider>
   );
-}
+};
 
 export default App;

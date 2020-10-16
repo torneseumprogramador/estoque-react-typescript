@@ -11,13 +11,13 @@ import {
   Box,
   TextField,
 } from '@material-ui/core';
-import { Link as RouterLink, useHistory } from 'react-router-dom';
+import { useHistory, Link as RouterLink } from 'react-router-dom';
 import User from '../../models/User';
 import api from '../../services/api';
-import { useAuth } from '../../contexts/AuthContext';
 
-const Login: React.FC = () => {
+const SignUp: React.FC = () => {
   const history = useHistory();
+
   const useStyles = makeStyles({
     root: {
       marginTop: 30,
@@ -25,19 +25,25 @@ const Login: React.FC = () => {
   });
   const classes = useStyles();
 
-  const [user, setUser] = useState<User>({ email: '', password: '' });
-
-  const { signIn } = useAuth();
+  const [user, setUser] = useState<User>({ name: '', email: '', password: '' });
   const handleChange = (e: any) => {
     setUser({
       ...user,
       [e.target.name]: e.target.value,
     });
   };
-  const handleSignIn = useCallback(async () => {
-    await signIn(user);
-    history.push('/dashboard');
-  }, [user.email, user.password, history]);
+  const signUp = useCallback(async () => {
+    const { name, email, password } = user;
+    const response = await api.post('/users', {
+      name,
+      email,
+      password,
+    });
+    alert(JSON.stringify(response.data));
+    setTimeout(() => {
+      history.push('/');
+    }, 3000);
+  }, [history, user]);
   return (
     <Container>
       <Grid
@@ -47,7 +53,15 @@ const Login: React.FC = () => {
         justify="center"
         alignItems="center"
       >
-        <Grid item xs={4}>
+        <Grid item xs={3}>
+          <TextField
+            label="Nome"
+            name="name"
+            value={user.name}
+            onChange={handleChange}
+          />
+        </Grid>
+        <Grid item xs={3}>
           <TextField
             label="Email"
             name="email"
@@ -55,7 +69,7 @@ const Login: React.FC = () => {
             onChange={handleChange}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <TextField
             label="Senha"
             type="password"
@@ -64,26 +78,26 @@ const Login: React.FC = () => {
             value={user.password}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <FormControl>
             <Button
               className={classes.root}
               variant="contained"
               color="primary"
-              onClick={handleSignIn}
+              onClick={signUp}
             >
-              Login
+              Cadastrar
             </Button>
           </FormControl>
         </Grid>
       </Grid>
       <Box display="flex" mt={3} alignItems="center" justifyContent="center">
-        <Link component={RouterLink} to="/signup">
-          Não tem conta cadastre-se
+        <Link component={RouterLink} to="/login">
+          Já tem conta! Log In!
         </Link>
       </Box>
     </Container>
   );
 };
 
-export default Login;
+export default SignUp;
