@@ -15,6 +15,7 @@ const Router: React.FC = () => {
         <Route path="/signup" exact component={SignUp} />
         <AuthRoute path="/dashboard" exact component={Dashboard} />
         <AuthRoute path="/transaction/new" exact component={Form} />
+        <AuthRoute path="/transaction/:id" component={Form} />
       </Switch>
     </BrowserRouter>
   );

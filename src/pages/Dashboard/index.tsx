@@ -12,23 +12,19 @@ import {
   TableFooter,
   Button,
 } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import formatValue from '../../services/formatValue';
-import {useHistory} from 'react-router-dom';
+import { Transaction } from '../../utils/types';
 
 interface Balance {
   income: number;
   outcome: number;
   total: number;
 }
-interface Transaction {
-  id: string;
-  type: 'income' | 'outcome';
-  value: number;
-}
 const Dashboard: React.FC = () => {
-const history = useHistory()
+  const history = useHistory();
   const { user } = useAuth();
   const [balance, setBalance] = useState<Balance>({} as Balance);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -41,13 +37,21 @@ const history = useHistory()
       })
       .catch(err => console.log(err));
   }, []);
-const handleNew = useCallback(() => {
-history.push('/transaction/new')
-}, [history])
-const handleUpdate = useCallback(() => {
-history.push('/transactions/:id')
-}, [history])
-const handleDelete = useCallback(() => {}, [])
+  const handleNew = useCallback(() => {
+    history.push('/transaction/new');
+  }, [history]);
+  const handleUpdate = useCallback(
+    (id: string) => {
+      history.push(`/transaction/${id}`);
+    },
+    [history],
+  );
+  const handleDelete = useCallback((id: string) => {
+    if (window.confirm('Você quer realmente deletar essa transação?')) {
+      api.delete(`transactions/${id}`);
+      setTransactions(tr => tr.filter(t => t.id !== id));
+    }
+  }, []);
   return (
     <Container style={{ minHeight: '100%' }}>
       <Box>
@@ -62,6 +66,8 @@ const handleDelete = useCallback(() => {}, [])
                 <TableCell>Total</TableCell>
                 <TableCell>Entrada</TableCell>
                 <TableCell>Saída</TableCell>
+                <TableCell>Alterar</TableCell>
+                <TableCell>Excluir</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -69,6 +75,8 @@ const handleDelete = useCallback(() => {}, [])
                 <TableCell>{formatValue(balance.total)}</TableCell>
                 <TableCell>{formatValue(balance.income)}</TableCell>
                 <TableCell>{formatValue(balance.outcome)}</TableCell>
+                <TableCell />
+                <TableCell />
               </TableRow>
               {transactions.length &&
                 transactions.map(transaction => (
@@ -82,26 +90,40 @@ const handleDelete = useCallback(() => {}, [])
                       {transaction.type === 'outcome' &&
                         formatValue(transaction.value)}
                     </TableCell>
+                    <TableCell>
+                      <Button
+                        onClick={() => handleUpdate(transaction.id)}
+                        variant="contained"
+                        color="secondary"
+                      >
+                        Alterar
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        onClick={() => handleDelete(transaction.id)}
+                        variant="outlined"
+                        color="primary"
+                      >
+                        Excluir
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
             </TableBody>
             <TableFooter>
               <TableRow>
                 <TableCell>
-                  <Button onClick={handleNew} variant="contained" color="primary">
+                  <Button
+                    onClick={handleNew}
+                    variant="contained"
+                    color="primary"
+                  >
                     Novo
                   </Button>
                 </TableCell>
-                <TableCell>
-                  <Button onClick={handleUpdate} variant="contained" color="secondary">
-                    Alterar
-                  </Button>
-                </TableCell>
-                <TableCell>
-                  <Button onClick={handleDelete} variant="outlined" color="primary">
-                    Excluir
-                  </Button>
-                </TableCell>
+                <TableCell />
+                <TableCell />
               </TableRow>
             </TableFooter>
           </Table>
