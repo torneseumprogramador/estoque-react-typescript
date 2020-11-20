@@ -3,13 +3,12 @@ import {
   Container,
   Grid,
   FormControl,
-  InputLabel,
-  Input,
   Button,
   makeStyles,
   Link,
   Box,
   TextField,
+  Typography,
 } from '@material-ui/core';
 import { useHistory, Link as RouterLink } from 'react-router-dom';
 import User from '../../models/User';
@@ -21,6 +20,7 @@ const SignUp: React.FC = () => {
   const useStyles = makeStyles({
     root: {
       marginTop: 30,
+      minWidth: 100,
     },
   });
   const classes = useStyles();
@@ -34,67 +34,63 @@ const SignUp: React.FC = () => {
   };
   const signUp = useCallback(async () => {
     const { name, email, password } = user;
-    const response = await api.post('/users', {
+    await api.post('/users', {
       name,
       email,
       password,
     });
-    alert(JSON.stringify(response.data));
-    setTimeout(() => {
-      history.push('/');
-    }, 3000);
+    history.push('/');
   }, [history, user]);
   return (
     <Container>
-      <Grid
-        direction="column"
-        spacing={2}
-        container
-        justify="center"
+      <Box
+        display="flex"
         alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+        padding={10}
       >
-        <Grid item xs={3}>
-          <TextField
-            label="Nome"
-            name="name"
-            value={user.name}
-            onChange={handleChange}
-          />
-        </Grid>
-        <Grid item xs={3}>
-          <TextField
-            label="Email"
-            name="email"
-            value={user.email}
-            onChange={handleChange}
-          />
-        </Grid>
-        <Grid item xs={3}>
-          <TextField
-            label="Senha"
-            type="password"
-            name="password"
-            onChange={handleChange}
-            value={user.password}
-          />
-        </Grid>
-        <Grid item xs={3}>
-          <FormControl>
-            <Button
-              className={classes.root}
-              variant="contained"
-              color="primary"
-              onClick={signUp}
-            >
-              Cadastrar
-            </Button>
-          </FormControl>
-        </Grid>
-      </Grid>
-      <Box display="flex" mt={3} alignItems="center" justifyContent="center">
-        <Link component={RouterLink} to="/login">
-          Já tem conta! Log In!
-        </Link>
+        <Typography variant="h3">Criar conta</Typography>
+        <TextField
+          style={{ marginTop: 10, minWidth: 300 }}
+          variant="filled"
+          label="Nome"
+          name="name"
+          value={user.name}
+          onChange={handleChange}
+        />
+        <TextField
+          style={{ marginTop: 10, minWidth: 300 }}
+          label="Email"
+          name="email"
+          variant="filled"
+          value={user.email}
+          onChange={handleChange}
+        />
+        <TextField
+          style={{ marginTop: 10, minWidth: 300 }}
+          label="Senha"
+          type="password"
+          name="password"
+          variant="filled"
+          onChange={handleChange}
+          value={user.password}
+        />
+        <FormControl>
+          <Button
+            className={classes.root}
+            variant="contained"
+            color="primary"
+            onClick={signUp}
+          >
+            Cadastrar
+          </Button>
+        </FormControl>
+        <Box display="flex" mt={3} alignItems="center" justifyContent="center">
+          <Link style={{ fontSize: 20 }} component={RouterLink} to="/login">
+            Já tem conta! Log In!
+          </Link>
+        </Box>
       </Box>
     </Container>
   );

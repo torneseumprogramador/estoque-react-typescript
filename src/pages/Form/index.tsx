@@ -66,7 +66,7 @@ const Form: React.FC = () => {
     } catch (err) {
       alert(err.message);
     }
-  }, [transaction, history]);
+  }, [transaction, id, history]);
   const handleChange = (e: any) => {
     setTransaction({
       ...transaction,
@@ -82,16 +82,19 @@ const Form: React.FC = () => {
         flexDirection="column"
       >
         <Box>
-          <Typography variant="h6">Você está na página novo!</Typography>
+          <Typography style={{ marginTop: 10 }} variant="h3">
+            Você está na página novo!
+          </Typography>
         </Box>
         <Box
           display="flex"
           alignItems="center"
           justifyContent="center"
           flexDirection="column"
+          padding={10}
         >
           <TextField
-            style={{ marginTop: 10 }}
+            style={{ marginTop: 10, minWidth: 300 }}
             name="title"
             label="Título"
             value={transaction.title}
@@ -99,7 +102,7 @@ const Form: React.FC = () => {
             variant="filled"
           />
           <TextField
-            style={{ marginTop: 10 }}
+            style={{ marginTop: 10, minWidth: 300 }}
             name="category"
             value={transaction.category}
             onChange={handleChange}
@@ -107,7 +110,7 @@ const Form: React.FC = () => {
             variant="filled"
           />
           <TextField
-            style={{ marginTop: 10 }}
+            style={{ marginTop: 10, minWidth: 300 }}
             value={transaction.value}
             onChange={handleChange}
             name="value"
@@ -115,7 +118,7 @@ const Form: React.FC = () => {
             variant="filled"
           />
           <TextField
-            style={{ marginTop: 10 }}
+            style={{ marginTop: 10, minWidth: 300 }}
             name="type"
             label="Tipo"
             variant="filled"
@@ -128,7 +131,7 @@ const Form: React.FC = () => {
             <MenuItem value="outcome">Saída</MenuItem>
           </TextField>
           <DatePicker
-            style={{ marginTop: 10 }}
+            style={{ marginTop: 10, minWidth: 300 }}
             inputVariant="filled"
             value={transaction.date}
             onChange={data => {
@@ -138,7 +141,7 @@ const Form: React.FC = () => {
             }}
           />
           <Button
-            style={{ marginTop: 30 }}
+            style={{ marginTop: 30, minWidth: 100 }}
             variant="contained"
             color="primary"
             onClick={handleTransaction}

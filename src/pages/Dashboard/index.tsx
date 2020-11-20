@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Container,
   Box,
@@ -49,13 +49,20 @@ const Dashboard: React.FC = () => {
   const handleDelete = useCallback((id: string) => {
     if (window.confirm('Você quer realmente deletar essa transação?')) {
       api.delete(`transactions/${id}`);
+      api
+        .get('transactions')
+        .then(res => {
+          setBalance(res.data.balance);
+          setTransactions(res.data.transactions);
+        })
+        .catch(err => console.log(err));
       setTransactions(tr => tr.filter(t => t.id !== id));
     }
   }, []);
   return (
     <Container style={{ minHeight: '100%' }}>
       <Box>
-        <Typography style={{ textAlign: 'center' }} variant="h3">
+        <Typography style={{ textAlign: 'center', marginTop: 10 }} variant="h3">
           Bem vindo &nbsp;
           {user.name}
         </Typography>
@@ -63,35 +70,21 @@ const Dashboard: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Total</TableCell>
-                <TableCell>Entrada</TableCell>
-                <TableCell>Saída</TableCell>
+                <TableCell>Nome</TableCell>
+                <TableCell>Valor</TableCell>
                 <TableCell>Alterar</TableCell>
                 <TableCell>Excluir</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell>{formatValue(balance.total)}</TableCell>
-                <TableCell>{formatValue(balance.income)}</TableCell>
-                <TableCell>{formatValue(balance.outcome)}</TableCell>
-                <TableCell />
-                <TableCell />
-              </TableRow>
               {transactions.length &&
                 transactions.map(transaction => (
                   <TableRow key={transaction.id}>
-                    <TableCell />
-                    <TableCell>
-                      {transaction.type === 'income' &&
-                        formatValue(transaction.value)}
-                    </TableCell>
-                    <TableCell>
-                      {transaction.type === 'outcome' &&
-                        formatValue(transaction.value)}
-                    </TableCell>
+                    <TableCell>{transaction.title}</TableCell>
+                    <TableCell>{formatValue(transaction.value)}</TableCell>
                     <TableCell>
                       <Button
+                        fullWidth
                         onClick={() => handleUpdate(transaction.id)}
                         variant="contained"
                         color="secondary"
@@ -101,6 +94,7 @@ const Dashboard: React.FC = () => {
                     </TableCell>
                     <TableCell>
                       <Button
+                        fullWidth
                         onClick={() => handleDelete(transaction.id)}
                         variant="outlined"
                         color="primary"
@@ -113,8 +107,12 @@ const Dashboard: React.FC = () => {
             </TableBody>
             <TableFooter>
               <TableRow>
+                <TableCell />
+                <TableCell />
+                <TableCell />
                 <TableCell>
                   <Button
+                    fullWidth
                     onClick={handleNew}
                     variant="contained"
                     color="primary"
@@ -122,12 +120,58 @@ const Dashboard: React.FC = () => {
                     Novo
                   </Button>
                 </TableCell>
-                <TableCell />
-                <TableCell />
               </TableRow>
             </TableFooter>
           </Table>
         </TableContainer>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-around"
+          mt={10}
+        >
+          <Typography
+            style={{ textAlign: 'center' }}
+            color="primary"
+            variant="h3"
+          >
+            TOTAL
+          </Typography>
+          <Typography style={{ textAlign: 'center' }} variant="h3">
+            ENTRADA
+          </Typography>
+          <Typography
+            style={{ textAlign: 'center' }}
+            color="secondary"
+            variant="h3"
+          >
+            SAÍDA
+          </Typography>
+        </Box>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-around"
+          mt={5}
+        >
+          <Typography
+            style={{ textAlign: 'center' }}
+            color="primary"
+            variant="h3"
+          >
+            {formatValue(balance.total)}
+          </Typography>
+          <Typography style={{ textAlign: 'center' }} variant="h3">
+            {formatValue(balance.income)}
+          </Typography>
+          <Typography
+            style={{ textAlign: 'center' }}
+            color="secondary"
+            variant="h3"
+          >
+            {formatValue(balance.outcome)}
+          </Typography>
+        </Box>
       </Box>
     </Container>
   );
